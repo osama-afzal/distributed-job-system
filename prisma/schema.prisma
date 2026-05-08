@@ -7,8 +7,24 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
-  password String 
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
+  jobs      Job[]
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  userId      String
+  type        String
+  payload     Json
+  status      String    @default("pending")
+  result      Json?
+  createdAt   DateTime  @default(now())
+  processedAt DateTime?
+
+  user        User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
