@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateJobDto } from './dto/create-job.dto';
@@ -14,5 +14,10 @@ export class JobsController {
         @Request() req: any
     ) {
         return await this.jobService.createJob(req.user.userId, data);
+    }
+
+    @Get(':id')
+    async getJob(id: string) {
+        return await this.jobService.getJob(id);
     }
 }

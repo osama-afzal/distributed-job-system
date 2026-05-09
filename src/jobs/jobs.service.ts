@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
@@ -22,5 +22,16 @@ export class JobsService {
         await this.rabbitMQService.publish(job);
 
         return job;
+    }
+
+    async getJob(id: string) {
+        const job = await this.prismaService.job.findUnique({ where: { id }});
+
+        if (!job) throw new NotFoundException('Job not found');
+
+        return {
+            id: job.id,
+            status: job.status
+        }
     }
 }

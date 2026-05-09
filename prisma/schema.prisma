@@ -23,6 +23,7 @@ model Job {
   result      Json?
   createdAt   DateTime  @default(now())
   processedAt DateTime?
+  errorMessage String?
 
   user        User @relation(fields: [userId], references: [id])
 
