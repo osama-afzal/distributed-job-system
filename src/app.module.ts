@@ -6,11 +6,12 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { JobsModule } from './jobs/jobs.module';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [AuthModule, UsersModule, ConfigModule.forRoot({
     isGlobal: true,
-  }), PrismaModule, JobsModule],
+  }), PrismaModule, JobsModule, RabbitMQModule],
   controllers: [AppController],
   providers: [AppService],
 })
