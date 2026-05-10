@@ -24,6 +24,8 @@ model Job {
   createdAt   DateTime  @default(now())
   processedAt DateTime?
   errorMessage String?
+  retryCount  Int @default(0)
+  maxRetries  Int @default(3)
 
   user        User @relation(fields: [userId], references: [id])
 

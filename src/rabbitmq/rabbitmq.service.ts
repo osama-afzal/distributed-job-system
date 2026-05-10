@@ -9,15 +9,17 @@ export class RabbitMQService implements OnModuleInit {
     const connection = await ampq.connect('amqp://localhost:5672');
 
     this.channel = await connection.createChannel();
-
-    await this.channel.assertQueue('jobs');
   }
 
-  async publish(message: any) {
-    this.channel.sendToQueue('jobs', Buffer.from(JSON.stringify(message)));
+  async publish(queue: string, message: any) {
+    await this.channel.assertQueue(queue);
+
+    this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
   }
 
   async consume(queue: string, callback: (message: any) => Promise<void>) {
+    await this.channel.assertQueue(queue);
+    
     await this.channel.consume(queue, async (msg) => {
       if (!msg) return;
 
@@ -30,7 +32,7 @@ export class RabbitMQService implements OnModuleInit {
       } catch (error) {
         console.error(`Job ${content.id} failed:`, error);
 
-        this.channel.nack(msg, false, false);
+        this.channel.ack(msg);
       }
     });
   }

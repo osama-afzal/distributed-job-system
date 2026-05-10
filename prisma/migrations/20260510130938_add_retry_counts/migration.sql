@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Job" ADD COLUMN     "maxRetries" INTEGER NOT NULL DEFAULT 3,
+ADD COLUMN     "retryCount" INTEGER NOT NULL DEFAULT 0;

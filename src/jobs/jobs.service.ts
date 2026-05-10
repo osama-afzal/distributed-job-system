@@ -19,7 +19,7 @@ export class JobsService {
             }
         });
 
-        await this.rabbitMQService.publish(job);
+        await this.rabbitMQService.publish(`${job.type}_jobs`, job);
 
         return job;
     }
