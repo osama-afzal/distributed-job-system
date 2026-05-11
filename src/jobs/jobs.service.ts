@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
+import { GetJobsDto } from './dto/get-jobs.dto';
 
 @Injectable()
 export class JobsService {
@@ -24,8 +25,13 @@ export class JobsService {
         return job;
     }
 
-    async getJob(id: string) {
-        const job = await this.prismaService.job.findUnique({ where: { id }});
+    async getJob(userId: string, id: string) {
+        const job = await this.prismaService.job.findUnique({ 
+            where: { 
+                id,
+                userId
+            }
+        });
 
         if (!job) throw new NotFoundException('Job not found');
 
@@ -33,5 +39,18 @@ export class JobsService {
             id: job.id,
             status: job.status
         }
+    }
+
+    async getJobs(userId: string, status?: string, type?: string) {
+        return await this.prismaService.job.findMany({
+            where: {
+                userId,
+                status,
+                type
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
     }
 }
