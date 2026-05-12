@@ -1,10 +1,16 @@
-import { IsEnum, IsObject, IsString } from "class-validator";
-import { JobType } from "../jobs.types";
+import { IsEnum, IsObject, IsString } from 'class-validator';
+import { JobType } from '../jobs.types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobDto {
-    @IsEnum(JobType)
-    type: string
+  @ApiProperty({
+    enum: JobType,
+    example: JobType.Report,
+  })
+  @IsEnum(JobType)
+  type: string;
 
-    @IsObject()
-    payload: object
+  @ApiProperty()
+  @IsObject()
+  payload: object;
 }

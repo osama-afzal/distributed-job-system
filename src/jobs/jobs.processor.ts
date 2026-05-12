@@ -1,13 +1,18 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { JobsService } from './jobs.service';
 import { JobStatus } from './jobs.types';
 
 @Injectable()
 export class JobProcessor implements OnModuleInit {
-  private readonly logger = new Logger(JobProcessor.name)
-  
+  private readonly logger = new Logger(JobProcessor.name);
+
   constructor(
     private readonly rabbitMQService: RabbitMQService,
     private readonly prismaService: PrismaService,
@@ -40,7 +45,7 @@ export class JobProcessor implements OnModuleInit {
         return this.processAnalyticsJob(job);
 
       default:
-        throw new Error(`Unknown job type: ${job.type}`);
+        throw new BadRequestException(`Unknown job type: ${job.type}`);
     }
   }
 
@@ -58,7 +63,7 @@ export class JobProcessor implements OnModuleInit {
     await this.completeJob(job.id, {
       reportId: crypto.randomUUID(),
       generatedRows: Math.floor(Math.random() * (3000 - 1000) + 1000),
-      format: 'pdf'
+      format: 'pdf',
     });
   }
 
@@ -76,7 +81,7 @@ export class JobProcessor implements OnModuleInit {
     await this.completeJob(job.id, {
       recipient: job.payload.email,
       delivered: true,
-      provider: 'sendgrid'
+      provider: 'sendgrid',
     });
   }
 
@@ -93,7 +98,7 @@ export class JobProcessor implements OnModuleInit {
 
     await this.completeJob(job.id, {
       processedRecords: Math.floor(Math.random() * (5000 - 1000) + 1000),
-      executionTimeMs: Math.floor(Math.random() * 100)
+      executionTimeMs: Math.floor(Math.random() * 100),
     });
   }
 
@@ -113,7 +118,7 @@ export class JobProcessor implements OnModuleInit {
       data: {
         status: JobStatus.Completed,
         processedAt: new Date(),
-        result
+        result,
       },
     });
   }
@@ -150,7 +155,7 @@ export class JobProcessor implements OnModuleInit {
     });
 
     if (!currentJob) {
-      throw new Error('Job not found');
+      throw new NotFoundException('Job not found');
     }
 
     if (currentJob.retryCount < currentJob.maxRetries) {
@@ -159,7 +164,7 @@ export class JobProcessor implements OnModuleInit {
       await this.failJob(job.id);
     }
 
-    throw new Error('Simulated error');
+    throw new BadRequestException('Simulated error');
   }
 
   async sleep(ms: number) {

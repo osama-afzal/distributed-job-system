@@ -1,12 +1,21 @@
-import { IsEnum, IsOptional } from "class-validator";
-import { JobStatus, JobType } from "../jobs.types";
+import { IsEnum, IsOptional } from 'class-validator';
+import { JobStatus, JobType } from '../jobs.types';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class GetJobsDto {
-    @IsOptional()
-    @IsEnum(JobStatus)
-    status?: string
+  @ApiProperty({
+    enum: JobStatus,
+    example: JobStatus.Pending,
+  })
+  @IsOptional()
+  @IsEnum(JobStatus)
+  status?: string;
 
-    @IsOptional()
-    @IsEnum(JobType)
-    type?: string
+  @ApiProperty({
+    enum: JobType,
+    example: JobType.Report,
+  })
+  @IsOptional()
+  @IsEnum(JobType)
+  type?: string;
 }
