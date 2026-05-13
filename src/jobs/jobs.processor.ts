@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   OnModuleInit,
@@ -162,9 +163,22 @@ export class JobProcessor implements OnModuleInit {
       await this.retryJob(job);
     } else {
       await this.failJob(job.id);
+
+      const queue = `${job.type}_jobs`;
+      const dlq = this.rabbitMQService.getDeadLetterQueue(queue);
+
+      await this.rabbitMQService.publish(dlq, {
+        ...job,
+        failedAt: new Date(),
+        reason: 'Max retries exceeded'
+      });
+
+      this.logger.warn(
+        `Job ${job.id} moved to DLQ after exceeding max retries`,
+      );
     }
 
-    throw new BadRequestException('Simulated error');
+    throw new InternalServerErrorException('Simulated error');
   }
 
   async sleep(ms: number) {

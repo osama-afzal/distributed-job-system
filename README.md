@@ -21,6 +21,8 @@ The project explores backend architecture concepts such as workload partitioning
 - DTO validation using class-validator
 - Structured logging with NestJS Logger
 - Dockerized infrastructure services
+- Dead-letter queue handling for permanently failed jobs
+- API rate limiting using NestJS Throttler
 
 ## Architecture Overview
 
@@ -92,7 +94,7 @@ The system tracks:
 - Completion timestamps
 - Error messages
 
-Jobs that exceed the maximum retry threshold are marked as failed and retained for inspection.
+Jobs that exceed retry thresholds are automatically moved into dead-letter queues for later inspection and replay.
 
 ## Tech Stack
 
@@ -108,9 +110,7 @@ Jobs that exceed the maximum retry threshold are marked as failed and retained f
 
 ## Future Improvements
 
-- Dead-letter queue support
 - Scheduled recovery for failed jobs
-- Swagger / OpenAPI documentation
 - Dedicated worker services
 - Metrics and monitoring dashboards
 - Full containerization of the NestJS application

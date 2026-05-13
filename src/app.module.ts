@@ -7,12 +7,23 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { JobsModule } from './jobs/jobs.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
   imports: [AuthModule, UsersModule, ConfigModule.forRoot({
     isGlobal: true,
-  }), PrismaModule, JobsModule, RabbitMQModule],
+  }), PrismaModule, JobsModule, RabbitMQModule, ThrottlerModule.forRoot([
+    {
+      ttl: 6000,
+      limit: 30,
+    },
+  ])],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard,
+  }],
 })
 export class AppModule {}

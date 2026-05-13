@@ -36,4 +36,8 @@ export class RabbitMQService implements OnModuleInit {
       }
     });
   }
+
+  getDeadLetterQueue(queue: string) {
+    return `${queue}_dlq`;
+  }
 }

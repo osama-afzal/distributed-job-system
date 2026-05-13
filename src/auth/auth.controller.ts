@@ -3,6 +3,7 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiResponse } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,7 @@ export class AuthController {
       },
     },
   })
+  @Throttle({ default: { limit: 3, ttl: 60000 }})
   @Post('register')
   async register(@Body() data: RegisterDto): Promise<any> {
     const { email, password } = data;
@@ -34,6 +36,7 @@ export class AuthController {
       },
     },
   })
+  @Throttle({ default: { limit: 3, ttl: 60000 }})
   @Post('login')
   async login(@Body() data: LoginDto): Promise<any> {
     const { email, password } = data;
