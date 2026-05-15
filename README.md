@@ -47,6 +47,8 @@ Jobs are persisted to PostgreSQL before being published to RabbitMQ, enabling re
 
 Redis is currently included as infrastructure groundwork for future caching, rate limiting, and distributed coordination features.
 
+The system separates HTTP API responsibilities from asynchronous worker processing, allowing independent scaling of API and worker processes.
+
 ## Job Types
 
 | Job Type | Queue | Characteristics |

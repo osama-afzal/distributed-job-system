@@ -10,6 +10,7 @@ import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { WorkersModule } from './workers/workers.module';
 
 @Module({
   imports: [AuthModule, UsersModule, ConfigModule.forRoot({
@@ -19,7 +20,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
       ttl: 6000,
       limit: 30,
     },
-  ])],
+  ]), WorkersModule],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_GUARD,
